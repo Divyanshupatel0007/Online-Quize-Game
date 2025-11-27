@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Culture Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+        background-image:url("indcul.jpg");
+        background-size: 770px;
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+      
+        .mandala-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #000 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: rotate 60s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 90%;
+            position: relative;
+            border: 3px solid #FF9933;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .diya-decoration {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #FF9933;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .signup-form, .level-selection, .quiz-container {
+            display: none;
+        }
+
+        .signup-form.active, .level-selection.active, .quiz-container.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #FF9933;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #138808;
+        }
+
+        button {
+            background: linear-gradient(135deg, #FF9933, #FF6600);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 153, 51, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .level-btn {
+            padding: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: 3px solid #FF9933;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .level-btn.locked {
+            background: #ddd;
+            cursor: not-allowed;
+        }
+
+        .level-btn.locked::after {
+            content: "🔒";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+
+        .sublevel-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .sublevel-btn {
+            padding: 15px;
+            background: linear-gradient(135deg, #87CEEB, #4682B4);
+        }
+
+        .question-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #FFF8DC;
+            border-radius: 12px;
+            border: 2px solid #FF9933;
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #FF9933;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background: #FFE5B4;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #87CEEB;
+            border-color: #138808;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 24px;
+            color: #FF0000;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .results {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .results h2 {
+            color: #FF9933;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 48px;
+            color: #138808;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid #FF9933;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .welcome-screen {
+            text-align: center;
+        }
+
+        .welcome-screen h2 {
+            color: #138808;
+            margin: 20px 0;
+        }
+
+        .start-btn {
+            font-size: 22px;
+            padding: 15px 50px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="mandala-bg"></div>
+    
+    <div class="container">
+        <div class="diya-decoration">🪔✨🪔</div>
+        
+        <!-- Welcome Screen -->
+        <div class="welcome-screen active" id="welcomeScreen">
+            <h1>🕉️ Indian Culture Quiz 🕉️</h1>
+            <h2>Test Your Knowledge of Indian Culture, Tradition, Food & World Affairs</h2>
+            <button class="start-btn" onclick="showSignup()">Start Quiz</button>
+        </div>
+
+        <!-- Signup Form -->
+        <div class="signup-form" id="signupForm">
+            <h1>Sign Up</h1>
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" id="userName" required>
+                </div>
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="number" id="userAge" min="5" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label>Class/Course:</label>
+                    <input type="text" id="userClass" required>
+                </div>
+                <button type="submit">Continue</button>
+            </form>
+        </div>
+
+        <!-- Level Selection -->
+        <div class="level-selection" id="levelSelection">
+            <h1>Select Difficulty Level</h1>
+            <div class="level-grid" id="levelGrid"></div>
+        </div>
+
+        <!-- Sublevel Selection -->
+        <div class="level-selection" id="sublevelSelection">
+            <h1>Select Sub-Level</h1>
+            <div class="sublevel-container" id="sublevelGrid"></div>
+            <button onclick="backToLevels()">Back to Levels</button>
+        </div>
+
+        <!-- Quiz Container -->
+        <div class="quiz-container" id="quizContainer">
+            <div class="timer" id="timer">Time: 30s</div>
+            <div class="progress" id="progress">Question 1 of 3</div>
+            <div class="question-container">
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+            </div>
+            <div class="navigation">
+                <button onclick="prevQuestion()">⬅️ Previous</button>
+                <button onclick="goHome()">🏠 Home</button>
+                <button onclick="nextQuestion()">Next ➡️</button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="level-selection" id="resultsScreen">
+            <div class="results">
+                <h2>Quiz Complete! 🎉</h2>
+                <div class="score" id="finalScore"></div>
+                <button onclick="goHome()">Back to Home</button>
+                <button onclick="retryLevel()">Retry Level</button>
+            </div>
+        </div>
+    </div>
+
+   
+<style>
+    footer {
+        text-align: center;
+        
+        padding: 20px 0;
+        background: #fff;
+    }
+
+    .tricolor-glow {
+        display: inline-block;
+        font-size: 22px;
+        font-weight: bold;
+        padding: 12px 35px;
+        border-radius: 15px;
+        background: white;
+        color:rgb(123, 9, 205);
+        border: 3px solid transparent;
+        animation: tricolorGlow 1.5s infinite alternate;
+        text-shadow: 0 0 5px #FF9933, 0 0 10px #FFFFFF, 0 0 15px #138808;
+    }
+
+    @keyframes tricolorGlow {
+        0% {
+            box-shadow: 0 0 10px #FF9933;
+            border-color: #FF9933;
+        }
+        50% {
+            box-shadow: 0 0 20px #FFFFFF;
+            border-color: #FFFFFF;
+        }
+        100% {
+            box-shadow: 0 0 10px #138808;
+            border-color: #138808;
+        }
+    }
+</style>
+
+<footer>
+    <div class="tricolor-glow">
+        Made by: Divyanshu Patel
+    </div>
+</footer>
+
+    <script>
+        const quizData = {
+            easy: {
+                1: [
+                    {q: "What is the national flower of India?", options: ["Rose", "Lotus", "Jasmine", "Sunflower"], answer: 1},
+                    {q: "Which festival is known as the Festival of Lights?", options: ["Holi", "Diwali", "Eid", "Christmas"], answer: 1},
+                    {q: "What is the capital of India?", options: ["Mumbai", "New Delhi", "Kolkata", "Chennai"], answer: 1},
+                    {q: "Which of these is a traditional Indian attire?", options: ["Jeans", "Saree", "T-shirt", "Suit"], answer: 1}
+
+                ],
+                2: [
+                    {q: "Biryani originated in which cuisine?", options: ["Chinese", "Mughlai", "Italian", "French"], answer: 1},
+                    {q: "Which sweet is made from milk and sugar?", options: ["Jalebi", "Gulab Jamun", "Samosa", "Pakora"], answer: 1},
+                    {q: "Masala Dosa is from which state?", options: ["Punjab", "Gujarat", "Karnataka", "Bihar"], answer: 2}
+                ],
+                3: [
+                    {q: "Which river is considered sacred in India?", options: ["Nile", "Gangas", "Amazon", "Thames"], answer: 1},
+                    {q: "Indian Independence Day is celebrated on?", options: ["26 January", "15 August", "2 October", "14 November"], answer: 1},
+                    {q: "How many states are there in India?", options: ["25", "28", "30", "32"], answer: 1}
+                ]
+            },
+            medium: {
+                1: [
+                    {q: "Who wrote the national anthem of India?", options: ["Mahatma Gandhi", "Rabindranath Tagore", "Subhas Chandra Bose", "Jawaharlal Nehru"], answer: 1},
+                    {q: "Which classical dance form originated in Tamil Nadu?", options: ["Kathak", "Bharatanatyam", "Odissi", "Kuchipudi"], answer: 1},
+                    {q: "The Ajanta Caves are located in which state?", options: ["Rajasthan", "Maharashtra", "Gujarat", "Madhya Pradesh"], answer: 1}
+                ],
+                2: [
+                    {q: "Which spice is known as 'Queen of Spices'?", options: ["Turmeric", "Cardamom", "Cumin", "Coriander"], answer: 1},
+                    {q: "Rogan Josh is a famous dish from which region?", options: ["Kerala", "Kashmir", "Bengal", "Assam"], answer: 1},
+                    {q: "Which Indian bread is made in a tandoor?", options: ["Chapati", "Naan", "Puri", "Paratha"], answer: 1}
+                ],
+                3: [
+                    {q: "Which country is the largest democracy in the world?", options: ["USA", "India", "Brazil", "Indonesia"], answer: 1},
+                    {q: "The United Nations headquarters is located in?", options: ["Geneva", "Paris", "New York", "London"], answer: 2},
+                    {q: "Who is the current Secretary-General of the UN?", options: ["Ban Ki-moon", "António Guterres", "Kofi Annan", "Boutros Boutros-Ghali"], answer: 1}
+                ]
+            },
+            hard: {
+                1: [
+                    {q: "Which Mughal emperor built the Taj Mahal?", options: ["Akbar", "Shah Jahan", "Aurangzeb", "Jahangir"], answer: 1},
+                    {q: "The Konark Sun Temple is in which state?", options: ["Tamil Nadu", "Odisha", "Karnataka", "Andhra Pradesh"], answer: 1},
+                    {q: "Who was the first woman Prime Minister of India?", options: ["Sarojini Naidu", "Indira Gandhi", "Pratibha Patil", "Sushma Swaraj"], answer: 1}
+                ],
+                2: [
+                    {q: "Which cuisine is known for using coconut extensively?", options: ["Punjabi", "Kerala", "Rajasthani", "Kashmiri"], answer: 1},
+                    {q: "What is the main ingredient in Dhokla?", options: ["Rice", "Gram flour", "Wheat", "Lentils"], answer: 1},
+                    {q: "Rasam is a traditional dish from which region?", options: ["North India", "South India", "East India", "West India"], answer: 1}
+                ],
+                3: [
+                    {q: "Which organization regulates international trade?", options: ["IMF", "WTO", "World Bank", "UNESCO"], answer: 1},
+                    {q: "The Paris Agreement deals with?", options: ["Trade", "Climate Change", "Nuclear Weapons", "Human Rights"], answer: 1},
+                    {q: "BRICS includes which of these countries?", options: ["Brazil, Russia, India, China, Singapore", "Brazil, Russia, India, China, South Africa", "Belgium, Russia, India, China, Spain", "Brazil, Romania, India, China, Sweden"], answer: 1}
+                ]
+            },
+            expert: {
+                1: [
+                    {q: "The Indus Valley Civilization flourished around?", options: ["1500 BCE", "2500 BCE", "3500 BCE", "500 BCE"], answer: 1},
+                    {q: "Which Vedic text contains hymns and prayers?", options: ["Rigveda", "Samaveda", "Yajurveda", "Atharvaveda"], answer: 0},
+                    {q: "The Nalanda University was established in which dynasty?", options: ["Maurya", "Gupta", "Mughal", "Chola"], answer: 1}
+                ],
+                2: [
+                    {q: "Which state is known as the 'Spice Garden of India'?", options: ["Karnataka", "Kerala", "Tamil Nadu", "Andhra Pradesh"], answer: 1},
+                    {q: "Hyderabadi Biryani uses which type of rice?", options: ["Basmati", "Sona Masoori", "Jasmine", "Arborio"], answer: 0},
+                    {q: "Which sweet is made during Onam festival?", options: ["Rasgulla", "Payasam", "Jalebi", "Pedha"], answer: 1}
+                ],
+                3: [
+                    {q: "The G20 Summit 2023 was hosted by?", options: ["USA", "India", "Japan", "Germany"], answer: 1},
+                    {q: "Which country withdrew from the Paris Climate Agreement in 2017?", options: ["China", "Russia", "USA", "Brazil"], answer: 2},
+                    {q: "The International Court of Justice is located in?", options: ["Geneva", "The Hague", "Brussels", "Vienna"], answer: 1}
+                ]
+            },
+            pro: {
+                1: [
+                    {q: "Which Sanskrit text describes the rules of drama and theater?", options: ["Arthashastra", "Natya Shastra", "Kamasutra", "Manusmriti"], answer: 1},
+                    {q: "The rock-cut temples of Ellora belong to which religions?", options: ["Only Hindu", "Only Buddhist", "Hindu, Buddhist, and Jain", "Only Jain"], answer: 2},
+                    {q: "Who composed the music for the national anthem?", options: ["Ravi Shankar", "Rabindranath Tagore", "A.R. Rahman", "Ilaiyaraaja"], answer: 1}
+                ],
+                2: [
+                    {q: "Which Indian dish was declared the UK's national dish?", options: ["Butter Chicken", "Chicken Tikka Masala", "Vindaloo", "Rogan Josh"], answer: 1},
+                    {q: "The traditional Thali concept represents which philosophy?", options: ["Six tastes balance", "Five elements", "Four seasons", "Three gunas"], answer: 0},
+                    {q: "Which spice trade route connected India to Rome?", options: ["Silk Road", "Spice Route", "Tea Route", "Cotton Route"], answer: 1}
+                ],
+                3: [
+                    {q: "Which international treaty banned nuclear weapon tests?", options: ["NPT", "CTBT", "START", "SALT"], answer: 1},
+                    {q: "The term 'Brexit' refers to which country leaving the EU?", options: ["Belgium", "Britain", "Bulgaria", "Belarus"], answer: 1},
+                    {q: "Which organization replaced GATT in 1995?", options: ["IMF", "WTO", "World Bank", "OECD"], answer: 1}
+                ]
+            }
+        };
+
+        let userData = {};
+        let currentLevel = '';
+        let currentSublevel = 1;
+        let currentQuestion = 0;
+        let answers = [];
+        let timer;
+        let timeLeft = 30;
+        let unlockedLevels = {easy: true, medium: false, hard: false, expert: false, pro: false};
+
+        function showSignup() {
+            document.getElementById('welcomeScreen').classList.remove('active');
+            document.getElementById('signupForm').classList.add('active');
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            userData = {
+                name: document.getElementById('userName').value,
+                age: document.getElementById('userAge').value,
+                class: document.getElementById('userClass').value
+            };
+            showLevels();
+        }
+
+        function showLevels() {
+            document.getElementById('signupForm').classList.remove('active');
+            document.getElementById('levelSelection').classList.add('active');
+            
+            const levelGrid = document.getElementById('levelGrid');
+            levelGrid.innerHTML = '';
+            
+            const levels = ['easy', 'medium', 'hard', 'expert', 'pro'];
+            levels.forEach(level => {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                btn.textContent = level.toUpperCase();
+                
+                if (unlockedLevels[level]) {
+                    btn.onclick = () => showSublevels(level);
+                } else {
+                    btn.classList.add('locked');
+                    btn.disabled = true;
+                }
+                
+                levelGrid.appendChild(btn);
+            });
+        }
+
+        function showSublevels(level) {
+            currentLevel = level;
+            document.getElementById('levelSelection').classList.remove('active');
+            document.getElementById('sublevelSelection').classList.add('active');
+            
+            const sublevelGrid = document.getElementById('sublevelGrid');
+            sublevelGrid.innerHTML = '';
+            
+            for (let i = 1; i <= 3;i++) {
+                const btn = document.createElement('button');
+                btn.className = 'sublevel-btn';
+                btn.textContent = `Level ${i}`;
+                btn.onclick = () => startQuiz(level, i);
+                sublevelGrid.appendChild(btn);
+            }
+        }
+
+        function backToLevels() {
+            document.getElementById('sublevelSelection').classList.remove('active');
+            document.getElementById('levelSelection').classList.add('active');
+        }
+
+        function startQuiz(level, sublevel) {
+            currentLevel = level;
+            currentSublevel = sublevel;
+            currentQuestion = 0;
+            answers = [];
+            
+            document.getElementById('sublevelSelection').classList.remove('active');
+            document.getElementById('quizContainer').classList.add('active');
+            
+            loadQuestion();
+            startTimer();
+        }
+
+        function loadQuestion() {
+            const questions = quizData[currentLevel][currentSublevel];
+            const q = questions[currentQuestion];
+            
+            document.getElementById('question').textContent = q.q;
+            document.getElementById('progress').textContent = `Question ${currentQuestion + 1} of 3`;
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.textContent = option;
+                div.onclick = () => selectOption(index);
+                
+                if (answers[currentQuestion] === index) {
+                    div.classList.add('selected');
+                }
+                
+                optionsDiv.appendChild(div);
+            });
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            loadQuestion();
+        }
+
+        function startTimer() {
+            timeLeft = 30;
+            clearInterval(timer);
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = `Time: ${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < 2) {
+                currentQuestion++;
+                loadQuestion();
+                startTimer();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+                startTimer();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timer);
+            
+            const questions = quizData[currentLevel][currentSublevel];
+            let score = 0;
+            
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].answer) {
+                    score++;
+                }
+            });
+            
+            const percentage = (score / 3) * 100;
+            
+            if (percentage >= 100) {
+                unlockNextLevel();
+            }
+            
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+            document.getElementById('finalScore').textContent = `${score} / 3 (${percentage.toFixed(0)}%)`;
+        }
+
+        function unlockNextLevel() {
+            const levels = ['easy', 'medium', 'hard', 'expert', 'pro'];
+            const currentIndex = levels.indexOf(currentLevel);
+            
+            if (currentIndex < levels.length - 1) {
+                unlockedLevels[levels[currentIndex + 1]] = true;
+            }
+        }
+
+        function goHome() {
+            clearInterval(timer);
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultsScreen').classList.remove('active');
+            showLevels();
+        }
+
+        function retryLevel() {
+            document.getElementById('resultsScreen').classList.remove('active');
+            startQuiz(currentLevel, currentSublevel);
+        }
+    </script>
+</body>
+</html>
